@@ -1,0 +1,38 @@
+# Edit this file to introduce tasks to be run by cron.
+#
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+#
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').#
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+#
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+#
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+#
+# For more information see the manual pages of crontab(5) and cron(8)
+#
+# m h  dom mon dow   command
+# This does a dynamic DSL check
+*/4 * * * * /usr/bin/wget "http://app.stratus.org.uk/mon/dyndns/check.php" -O /tmp/dyndns_check_results.html
+#---------------------------------------------------------------------------------
+# this is the the Sv3C cameras - 4 times per hour to test - change to every minute when in production
+*/2 * * * * /home/pi/cgi-bin/webcam/pull-sv3c.sh > /home/pi/cgi-bin/webcam/run-cam2.log
+*/2 * * * * /home/pi/cgi-bin/webcam/pull-pi-71.sh > /home/pi/cgi-bin/webcam/run-cam1.log
+
+#### not needed anymore
+#1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31,33,35,37,39,41,43,45,47,49,51,53,55,57,59 * * * * /home/pi/cgi-bin/webcam/ftp_cam03_stratus.sh
+
+59 23 * * * /home/pi/cgi-bin/webcam/camstore_archive.sh
+# this is for the internal webcam on this pi
+#0,30 7,8,9,10,11,12,13,14,15,16,17,18,19 * * * /home/pi/cgi-bin/webcam/movie_today_white.sh
+
+# reset the PoE stuff at 2 mins to midnight
+58 23 * * * /usr/bin/sudo /usr/bin/python /opt/check_lan/energenie-reset-poe-switch.py

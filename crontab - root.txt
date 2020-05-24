@@ -1,0 +1,45 @@
+# Edit this file to introduce tasks to be run by cron.
+#
+# Each task to run has to be defined through a single line
+# indicating with different fields when the task will be run
+# and what command to run for the task
+#
+# To define the time you can provide concrete values for
+# minute (m), hour (h), day of month (dom), month (mon),
+# and day of week (dow) or use '*' in these fields (for 'any').#
+# Notice that tasks will be started based on the cron's system
+# daemon's notion of time and timezones.
+#
+# Output of the crontab jobs (including errors) is sent through
+# email to the user the crontab file belongs to (unless redirected).
+#
+# For example, you can run a backup of all your user accounts
+# at 5 a.m every week with:
+# 0 5 * * 1 tar -zcf /var/backups/home.tgz /home/
+#
+# For more information see the manual pages of crontab(5) and cron(8)
+#
+# m h  dom mon dow   command
+30 0,3,6,9,12,15,18,21 * * * /usr/sbin/ntpdate -u pool.ntp.org
+
+# 2014-8-3 DH - added webcam restart at midnight-2 as after a while it 'goes dark'
+58 23 * * *  /usr/bin/logger "Planned webcam service restart ...";/usr/sbin/service webcam restart
+#
+05 00 * * * sudo /usr/sbin/service ntp stop; sudo /usr/sbin/ntpdate pool.ntp.org; sudo /usr/sbin/service ntp start
+
+# set these so they do not conflict by using a prime number of minutes
+#
+# this first command is the test to see if the link is down and togglethe power to the router if on
+29 * * * *   /usr/bin/logger "Planned DSL/LAN check 29 past hour ..."; /opt/check_lan/check_lan.sh >  /tmp/router-lan-check-log.txt
+#
+# this next command will force the energenie socket on, in case someone leaves it off - this turns the router on
+14,28,42,56 * * * * /usr/bin/logger "Running energenie-on.py to force on if off (every ~14 mins)" ; /usr/bin/python /opt/check_lan/energenie-on.py
+#
+# Catch all restart under the PIs control on the 1st and 15th of each month
+59 23 1,6,11,16,21,26,31 * * /usr/bin/logger "Planned reboot by cron on 1/6/11/16/21/26/31 of month"; /sbin/reboot
+#
+# reset poe switch to catch webcams and access point from hanging
+01 00 7,14,21,28 * *  /usr/bin/logger "Planned restart of POE switch by cron on 7,14,21,28 of month"; /usr/bin/python /opt/check_lan/energenie-reset-poe-switch.py
+#
+# Test DSL router restart - one off for Sunday 11th of November as a test
+#01 00 11 * * /usr/bin/logger "Planned restart of router by cron 00:01 on 11 of month"; /usr/bin/sudo /usr/bin/python /opt/check_lan/energenie-reset-router-p1.py
