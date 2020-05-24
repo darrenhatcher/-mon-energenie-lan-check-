@@ -1,2 +1,0 @@
-# reset the PoE switch at 2 mins to midnight
-58 23 * * * /usr/bin/sudo /usr/bin/python /opt/check_lan/energenie-reset-poe-switch.py
